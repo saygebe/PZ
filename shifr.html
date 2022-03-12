@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Шифрование - дешифрование</title>
+	<script type="text/javascript">
+		function key_create(shifr) {
+			var alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+			var key_word
+			if (shifr)
+				key_word = document.forms[0].key17.value.toLowerCase()
+			else
+				key_word = document.forms[0].key22.value.toLowerCase()
+			for (var i = 0; i < alphabet.length; i++) {
+				if (key_word.indexOf(alphabet[i]) == -1)
+					alphabet = alphabet.replace(alphabet[i], ' ')
+			}
+			alphabet = alphabet.replaceAll(' ', '')
+			var key = []
+			for (var i = 0; i < key_word.length; i++) {
+				key.push(alphabet.indexOf(key_word[i]))
+			}
+			return key
+		}
+
+		function shifr() {
+			var phrase = document.forms[0].var17.value.toLowerCase().replaceAll(' ', '@')
+			var key = key_create(true)
+			var str_num = parseInt(phrase.length / key.length)
+			if (phrase.length % key.length != 0) {
+				str_num = parseInt(phrase.length / key.length) + 1
+			}
+			var tabl = []
+			for (var i = 0; i < key.length; i++)
+				tabl[i] = []
+			var passed = 0
+			while (passed < phrase.length) {
+				for (var i = 0; i < key.length; i++) {
+					tabl[key[i]].push(phrase[passed])
+					++passed
+					if (passed == phrase.length) break
+				}
+			}
+			sh_result = ''
+			for (var i = 0; i < key.length; i++) {
+				for (var j = 0; j < tabl[i].length; j++) {
+					sh_result = sh_result.concat(tabl[i][j])
+				}
+			}
+			document.forms[0].var17result.value = sh_result
+		}
+
+		function deshifr() {
+			var phrase = document.forms[0].var22.value.toLowerCase().replaceAll(' ', '')
+			var key = key_create(false)
+			var str_num = parseInt(phrase.length / key.length)
+			if (phrase.length % key.length != 0) {
+				str_num = parseInt(phrase.length / key.length) + 1
+			}
+			var tabl = []
+			for (var i = 0; i < key.length; i++)
+				tabl[i] = []
+			var passed = 0
+			for (var i = 0; i < key.length; i++) {
+				k = str_num
+				if (phrase.length % key.length != 0) {
+					if (!key.slice(0, phrase.length % key.length).includes(i))
+						--k
+				}
+				for (var j = 0; j < k; j++) {
+					tabl[i].push(phrase[passed])
+					++passed
+				}
+			}
+			desh_result = ''
+			for (var i = 0; i < str_num; i++) {
+				for (var j = 0; j < key.length; j++) {
+					if (tabl[key[j]][i] != undefined)
+						desh_result = desh_result.concat(tabl[key[j]][i])
+				}
+			}
+			document.forms[0].var22result.value = desh_result.replaceAll('@', ' ')
+		}
+	</script>
+</head>
+<body>
+	<form>
+		<p>Исходная фраза:</p>
+		<input type="text" name="var17" size="100"><br>
+		<p>Ключ:</p>
+		<input type="text" name="key17" size="100"><br><br>
+		<input type="button" onclick="shifr()" value="Зашифровать"><br>
+		<p>Результат:</p>
+		<input type="text" name="var17result" size="100"><br><br><br>
+		<p>Зашифрованная фраза:</p>
+		<input type="text" name="var22" size="100"><br>
+		<p>Ключ:</p>
+		<input type="text" name="key22" size="100"><br><br>
+		<input type="button" onclick="deshifr()" value="Расшифровать"><br>
+		<p>Результат:</p>
+		<input type="text" name="var22result" size="100"><br>
+	</form>
+</body>
+</html>
